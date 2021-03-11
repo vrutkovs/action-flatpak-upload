@@ -1,9 +1,9 @@
 name: flatpak-build
 description: Build flatpak
 inputs:
-  build_repo:
-    description: Flatpak repo
-    default: app
+  build-repo-path:
+    description: Path to a local flatpak repo
+    default: /repo
     required: true
   url:
     description: Flatpak repo url
@@ -26,6 +26,6 @@ runs:
         REPO_TOKEN: ${{ inputs.token }}
       run: |
         export BUILD_URL=$(flat-manager-client create ${{ inputs.url }} ${{ inputs.name }})
-        flat-manager-client push $BUILD_URL ${{ inputs.build_repo }}
+        flat-manager-client push $BUILD_URL ${{ inputs.build-repo-path }}
         flat-manager-client commit --wait $BUILD_URL
         flat-manager-client publish --wait $BUILD_URL
