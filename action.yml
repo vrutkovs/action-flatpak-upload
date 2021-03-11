@@ -1,0 +1,31 @@
+name: flatpak-build
+description: Build flatpak
+inputs:
+  build_repo:
+    description: Flatpak repo
+    default: app
+    required: true
+  url:
+    description: Flatpak repo url
+    default: https://dl.russianfedora.online/repo
+    required: true
+  name:
+    description: Flatpak repo name
+    default: stable
+    required: true
+  token:
+    description: Flatpak repo token
+    default: foo
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: push-to-repo
+      shell: bash
+      env:
+        REPO_TOKEN: ${{ inputs.token }}
+      run: |
+        export BUILD_URL=$(flat-manager-client create ${{ inputs.url }} ${{ inputs.name }})
+        flat-manager-client push $BUILD_URL ${{ inputs.build_repo }}
+        flat-manager-client commit --wait $BUILD_URL
+        flat-manager-client publish --wait $BUILD_URL
